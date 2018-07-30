@@ -2,6 +2,7 @@ module PhotoGroove exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 
 urlPrefix : String
 urlPrefix =
@@ -19,7 +20,7 @@ viewThumbnail selectedUrl thumbnail =
         img [ src (urlPrefix ++ thumbnail.url)
         -- Html.classList builds a class attribute using a list of touples
         -- first comes the desired class and second a bolean for whether to include
-        , classList [ ( "selected", selectedUrl == thumbnail.url) ] ] []
+        , classList [ ( "selected", selectedUrl == thumbnail.url) ], onClick { operation = "SELECT_PHOTO", data = thumbnail.url } ] []
 
 initialModel =
     { photos = 
@@ -30,5 +31,16 @@ initialModel =
     , selectedUrl = "1.jpeg"
     }
 
+
+update message model =
+    if message.operation == "SELECT_PHOTO" then
+        { model | selectedUrl = message.data }
+    else
+        model
+
 main =
-    view initialModel
+    Html.beginnerProgram
+        { model = initialModel
+        , view = view
+        , update = update 
+        }
